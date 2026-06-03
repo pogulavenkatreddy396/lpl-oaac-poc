@@ -1,0 +1,10 @@
+{
+  "name": "lpl-oaac-sample-trading",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sample Node.js service instrumented by OneAgent for the OaC POC demo",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "dependencies": { "express": "^4.19.2" },
+  "engines": { "node": ">=18" }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "LPL OaC profile - {{SERVICE_NAME}}",
+  "severityRules": [
+    {
+      "severityLevel": "{{DT_SEVERITY}}",
+      "delayInMinutes": {{ALERT_DELAY_MINUTES}},
+      "tagFilter": {
+        "includeMode": "INCLUDE_ALL",
+        "tagFilters": [
+          { "context": "CONTEXTLESS", "key": "lpl.managed-by", "value": "observability-as-code" },
+          { "context": "CONTEXTLESS", "key": "lpl.team", "value": "{{OWNING_TEAM}}" }
+        ]
+      }
+    }
+  ],
+  "eventTypeFilters": []
+}

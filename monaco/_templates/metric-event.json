@@ -1,0 +1,30 @@
+{
+  "enabled": true,
+  "summary": "LPL OaC alert - {{SERVICE_NAME}}",
+  "queryDefinition": {
+    "type": "METRIC_KEY",
+    "metricKey": "{{SLI_METRIC}}",
+    "aggregation": "AVG",
+    "entityFilter": {
+      "dimensionKey": "dt.entity.service",
+      "conditions": [
+        { "type": "TAG", "value": "lpl.managed-by:observability-as-code" }
+      ]
+    }
+  },
+  "modelProperties": {
+    "type": "STATIC_THRESHOLD",
+    "threshold": {{THRESHOLD}},
+    "alertCondition": "ABOVE",
+    "violatingSamples": 3,
+    "samples": 5,
+    "dealertingSamples": 5
+  },
+  "eventTemplate": {
+    "title": "{{SERVICE_NAME}} - {{SLI_METRIC}} threshold breach",
+    "description": "Metric {{SLI_METRIC}} for {dimensions:dt.entity.service} breached the LPL benchmark threshold of {{THRESHOLD}}. Mapped severity {{SEVERITY}}.",
+    "eventType": "{{DT_SEVERITY}}",
+    "davisMerge": true
+  },
+  "eventEntityDimensionKey": "dt.entity.service"
+}

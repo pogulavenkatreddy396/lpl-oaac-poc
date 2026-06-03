@@ -1,0 +1,74 @@
+name: oaac-pipeline
+
+# 5 stages, mirroring the Report 1/2/3 pipeline design:
+#   syntax -> tag-validation -> benchmark-check -> staging-dry-run -> deploy
+# PRs run the first four (gate). Merge to main runs deploy.
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ["monaco/**"]
+  push:
+    branches: [main]
+    paths: ["monaco/**"]
+
+env:
+  MONACO_VERSION: "2.18.0"   # pin; bump deliberately. Verify latest on the releases page.
+  DT_ENV_URL: ${{ secrets.DT_ENV_URL }}
+  DT_API_TOKEN: ${{ secrets.DT_API_TOKEN }}
+
+jobs:
+  gate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+
+      - name: 1 — syntax check (YAML + JSON parse)
+        run: node scripts/ci-validate.js syntax
+
+      - name: 2 — tag validation (LPL provenance + mandatory tags)
+        run: node scripts/ci-validate.js tags
+
+      - name: 3 — benchmark check (LPL Standard v4)
+        run: node scripts/ci-validate.js benchmark
+
+      - name: install Monaco
+        run: |
+          curl -fsSL -o monaco \
+            "https://github.com/Dynatrace/dynatrace-configuration-as-code/releases/download/v${MONACO_VERSION}/monaco-linux-amd64"
+          chmod +x monaco && sudo mv monaco /usr/local/bin/monaco
+          monaco version
+
+      - name: 4 — staging dry-run (monaco deploy --dry-run)
+        if: env.DT_ENV_URL != '' && env.DT_API_TOKEN != ''
+        working-directory: monaco
+        run: monaco deploy manifest.yaml --environment dynatrace-trial --dry-run
+        # If tenant secrets are not set on PRs, this step is skipped — the
+        # first three gates still run and must pass before merge.
+
+  deploy:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+
+      - name: re-run gates before deploy
+        run: |
+          node scripts/ci-validate.js syntax
+          node scripts/ci-validate.js tags
+          node scripts/ci-validate.js benchmark
+
+      - name: install Monaco
+        run: |
+          curl -fsSL -o monaco \
+            "https://github.com/Dynatrace/dynatrace-configuration-as-code/releases/download/v${MONACO_VERSION}/monaco-linux-amd64"
+          chmod +x monaco && sudo mv monaco /usr/local/bin/monaco
+
+      - name: 5 — deploy to trial tenant
+        working-directory: monaco
+        run: monaco deploy manifest.yaml --environment dynatrace-trial

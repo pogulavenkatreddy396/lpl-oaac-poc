@@ -1,0 +1,12 @@
+{
+  "name": "{{SERVICE_NAME}}",
+  "enabled": true,
+  "rules": [
+    {
+      "enabled": true,
+      "fileName": "{{ENTRY_POINT}}",
+      "fileNameMatcher": "ENDS_WITH",
+      "matchType": "ENDS_WITH"
+    }
+  ]
+}

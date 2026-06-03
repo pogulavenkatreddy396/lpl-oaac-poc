@@ -1,0 +1,43 @@
+{
+  "benchmark": "LPL Observability Standard Benchmark v4",
+  "appliesTo": "Dynatrace custom service detection + custom alerting",
+  "notes": "Validation rules the submission handler enforces before a config is allowed into a PR. Mirrors the tag taxonomy and severity model from Report 3 (scoring workbook).",
+
+  "allowedTechnologies": ["nodejs", "java", "dotnet", "go", "php"],
+
+  "allowedEnvironments": ["PROD", "PROD_EAST", "STAGING", "DEV"],
+
+  "severityModel": {
+    "P1": { "dtSeverity": "AVAILABILITY", "alertingProfileDelayMinutes": 0, "description": "Service down / customer-facing outage" },
+    "P2": { "dtSeverity": "ERROR", "alertingProfileDelayMinutes": 5, "description": "Elevated error rate / degraded function" },
+    "P3": { "dtSeverity": "PERFORMANCE", "alertingProfileDelayMinutes": 15, "description": "Performance / latency degradation" }
+  },
+  "allowedSeverities": ["P1", "P2", "P3"],
+
+  "mandatoryTags": [
+    { "key": "lpl.team", "source": "owningTeam", "description": "Owning team — required for routing and ownership" },
+    { "key": "lpl.environment", "source": "environment", "description": "Deployment environment" },
+    { "key": "lpl.service-tier", "source": "serviceTier", "description": "Business criticality tier (1-3)" },
+    { "key": "lpl.cost-center", "source": "costCenter", "description": "Cost allocation — required for showback" },
+    { "key": "lpl.managed-by", "value": "observability-as-code", "description": "Provenance marker — proves this object was deployed via the OaC pipeline, not the UI" }
+  ],
+  "allowedServiceTiers": ["1", "2", "3"],
+
+  "sli": {
+    "allowedMetrics": [
+      "builtin:service.response.time",
+      "builtin:service.errors.total.rate",
+      "builtin:service.requestCount.total"
+    ],
+    "thresholdRules": {
+      "builtin:service.response.time": { "unit": "microseconds", "min": 1000, "max": 60000000, "comment": "Dynatrace reports response time in microseconds" },
+      "builtin:service.errors.total.rate": { "unit": "percent", "min": 0.1, "max": 100 },
+      "builtin:service.requestCount.total": { "unit": "count", "min": 1, "max": 10000000 }
+    }
+  },
+
+  "namingRules": {
+    "serviceNameRegex": "^[A-Za-z0-9][A-Za-z0-9 ._-]{2,79}$",
+    "configIdRegex": "^[a-z0-9-]{3,60}$"
+  }
+}

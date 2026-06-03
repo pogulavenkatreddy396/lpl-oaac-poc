@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LPL Observability — Service Instrumentation Request</title>
+<style>
+  :root {
+    --indigo: #42468F;
+    --blue: #026EC0;
+    --purple: #7A3097;
+    --magenta: #E8057C;
+    --gray: #4C4A4D;
+    --line: #e3e3ea;
+    --bg: #f6f7fb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--gray);
+    font: 15px/1.5 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  header {
+    background: linear-gradient(90deg, var(--indigo), var(--purple));
+    color: #fff; padding: 22px 28px;
+  }
+  header h1 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: .2px; }
+  header p { margin: 4px 0 0; font-size: 13px; opacity: .9; }
+  main { max-width: 760px; margin: 26px auto; padding: 0 18px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 24px 26px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+  .full { grid-column: 1 / -1; }
+  label { display: block; font-size: 12.5px; font-weight: 600; color: var(--indigo); margin: 0 0 5px; text-transform: uppercase; letter-spacing: .4px; }
+  input, select { width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; background: #fff; color: var(--gray); }
+  input:focus, select:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(2,110,192,.12); }
+  .hint { font-size: 11.5px; color: #8a8a93; margin-top: 4px; }
+  .actions { margin-top: 22px; display: flex; gap: 12px; align-items: center; }
+  button { background: var(--magenta); color: #fff; border: 0; padding: 11px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  button:disabled { opacity: .55; cursor: default; }
+  .result { margin-top: 18px; border-radius: 10px; padding: 14px 16px; font-size: 13.5px; display: none; white-space: pre-wrap; }
+  .result.ok { background: #eef7f0; border: 1px solid #bfe3c9; color: #1f6b39; display: block; }
+  .result.err { background: #fdeef2; border: 1px solid #f4c2d2; color: #a01545; display: block; }
+  .result pre { background: #1e1e28; color: #e6e6ee; padding: 12px; border-radius: 8px; overflow:auto; font-size: 12px; }
+  footer { text-align: center; font-size: 11.5px; color: #9a9aa3; padding: 18px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Service Instrumentation Request</h1>
+  <p>Submit once — a governed PR deploys your custom Dynatrace service &amp; alert via Observability-as-Code.</p>
+</header>
+
+<main>
+  <div class="card">
+    <div class="grid">
+      <div class="full">
+        <label for="serviceName">Service name</label>
+        <input id="serviceName" placeholder="ClientWorks Trading API" />
+        <div class="hint">As it should appear in Dynatrace. Letters, numbers, spaces, . _ -</div>
+      </div>
+
+      <div>
+        <label for="technology">Technology</label>
+        <select id="technology"></select>
+      </div>
+      <div>
+        <label for="environment">Environment</label>
+        <select id="environment"></select>
+      </div>
+
+      <div class="full">
+        <label for="entryPoint">Detection entry point</label>
+        <input id="entryPoint" placeholder="routes/trading.js" />
+        <div class="hint">Module/file (or class.method) that defines the service boundary.</div>
+      </div>
+
+      <div>
+        <label for="owningTeam">Owning team</label>
+        <input id="owningTeam" placeholder="trading-platform" />
+      </div>
+      <div>
+        <label for="serviceTier">Service tier</label>
+        <select id="serviceTier"></select>
+      </div>
+
+      <div>
+        <label for="costCenter">Cost center</label>
+        <input id="costCenter" placeholder="CC-4821" />
+      </div>
+      <div>
+        <label for="severity">Alert severity</label>
+        <select id="severity"></select>
+      </div>
+
+      <div>
+        <label for="sliMetric">SLI metric</label>
+        <select id="sliMetric"></select>
+      </div>
+      <div>
+        <label for="threshold">Threshold</label>
+        <input id="threshold" type="number" placeholder="2000000" />
+        <div class="hint" id="thresholdHint">Units depend on the chosen metric.</div>
+      </div>
+
+      <div class="full">
+        <label for="notificationTarget">Notification target (optional)</label>
+        <input id="notificationTarget" placeholder="#trading-alerts or pagerduty-trading" />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="submitBtn">Submit instrumentation request</button>
+      <span class="hint" id="modeNote"></span>
+    </div>
+
+    <div class="result" id="result"></div>
+  </div>
+</main>
+
+<footer>Softility · LPL Observability-as-Code · Phase 2 POC</footer>
+
+<script>
+const $ = (id) => document.getElementById(id);
+function fill(sel, items, labeler) {
+  const el = $(sel);
+  el.innerHTML = "";
+  items.forEach((v) => {
+    const o = document.createElement("option");
+    o.value = v; o.textContent = labeler ? labeler(v) : v;
+    el.appendChild(o);
+  });
+}
+
+let MODEL = {};
+async function boot() {
+  const b = await (await fetch("/api/benchmark")).json();
+  MODEL = b;
+  fill("technology", b.allowedTechnologies);
+  fill("environment", b.allowedEnvironments);
+  fill("serviceTier", b.allowedServiceTiers, (t) => "Tier " + t);
+  fill("severity", b.allowedSeverities, (s) => s + " — " + b.severityModel[s].description);
+  fill("sliMetric", b.allowedMetrics);
+  updateThresholdHint();
+  $("sliMetric").addEventListener("change", updateThresholdHint);
+}
+function updateThresholdHint() {
+  const m = $("sliMetric").value;
+  const hints = {
+    "builtin:service.response.time": "Microseconds (e.g. 2000000 = 2s).",
+    "builtin:service.errors.total.rate": "Percent (0.1 – 100).",
+    "builtin:service.requestCount.total": "Request count."
+  };
+  $("thresholdHint").textContent = hints[m] || "Units depend on the chosen metric.";
+}
+
+async function submit() {
+  const payload = {
+    serviceName: $("serviceName").value,
+    technology: $("technology").value,
+    entryPoint: $("entryPoint").value,
+    owningTeam: $("owningTeam").value,
+    environment: $("environment").value,
+    serviceTier: $("serviceTier").value,
+    costCenter: $("costCenter").value,
+    sliMetric: $("sliMetric").value,
+    threshold: $("threshold").value,
+    severity: $("severity").value,
+    notificationTarget: $("notificationTarget").value
+  };
+  const res = $("result");
+  $("submitBtn").disabled = true;
+  try {
+    const r = await fetch("/api/submit", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await r.json();
+    if (data.ok) {
+      res.className = "result ok";
+      if (data.mode === "pull-request") {
+        res.innerHTML = "✓ " + data.message + "\n" + data.pr.url;
+      } else {
+        res.innerHTML = "✓ " + data.message + "\nWould add: " + data.files.join("\n          ");
+      }
+    } else {
+      res.className = "result err";
+      res.textContent = "✗ Rejected at " + (data.stage || "validation") + ":\n• " + data.errors.join("\n• ");
+    }
+  } catch (e) {
+    res.className = "result err";
+    res.textContent = "✗ Request failed: " + e.message;
+  } finally {
+    $("submitBtn").disabled = false;
+  }
+}
+
+$("submitBtn").addEventListener("click", submit);
+boot();
+</script>
+</body>
+</html>

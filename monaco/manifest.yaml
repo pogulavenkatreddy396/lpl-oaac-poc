@@ -1,0 +1,19 @@
+# Dynatrace Configuration-as-Code (Monaco v2) deployment manifest.
+# Auth + URL are read from environment variables — never commit tokens.
+#   DT_ENV_URL   e.g. https://abc12345.live.dynatrace.com
+#   DT_API_TOKEN classic API token with: settings.read, settings.write,
+#                ReadConfig, WriteConfig, DataExport, entities.read
+manifestVersion: "1.0"
+projects:
+  - name: lpl-observability
+    path: projects/lpl-observability
+environmentGroups:
+  - name: trial
+    environments:
+      - name: dynatrace-trial
+        url:
+          type: environment
+          value: DT_ENV_URL
+        auth:
+          token:
+            name: DT_API_TOKEN
