@@ -13,7 +13,7 @@ on:
     paths: ["monaco/**"]
 
 env:
-  MONACO_VERSION: "2.18.0"   # pin; bump deliberately. Verify latest on the releases page.
+  MONACO_VERSION: "2.28.9"   # pin; bump deliberately. Verify latest on the releases page.
   DT_ENV_URL: ${{ secrets.DT_ENV_URL }}
   DT_API_TOKEN: ${{ secrets.DT_API_TOKEN }}
 
