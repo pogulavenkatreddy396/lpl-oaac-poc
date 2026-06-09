@@ -63,16 +63,17 @@ jobs:
           node scripts/ci-validate.js tags
           node scripts/ci-validate.js benchmark
 
-      - name: Install Monaco
+      - name: Debug Monaco Download
         run: |
-          set -euxo pipefail
+          echo "Monaco Version: $MONACO_VERSION"
           URL="https://github.com/Dynatrace/dynatrace-configuration-as-code/releases/download/v${MONACO_VERSION}/monaco-linux-amd64"
-          echo "Downloading $URL"
-          wget -O monaco "$URL"
+          echo "Downloading from:"
+          echo "$URL"
+          pwd
+          ls -la
+          wget "$URL" -O monaco
           ls -lh monaco
-          chmod +x monaco
-          sudo mv monaco /usr/local/bin/
-          monaco --version
+          file monaco
       
       - name: 5 — deploy to trial tenant
         working-directory: monaco
