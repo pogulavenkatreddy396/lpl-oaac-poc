@@ -37,9 +37,13 @@ jobs:
 
       - name: install Monaco
         run: |
-          curl -fsSL -o monaco \
-            "https://github.com/Dynatrace/dynatrace-configuration-as-code/releases/download/v${MONACO_VERSION}/monaco-linux-amd64"
-          chmod +x monaco && sudo mv monaco /usr/local/bin/monaco
+          set -euxo pipefail
+          URL="https://github.com/Dynatrace/dynatrace-configuration-as-code/releases/download/v${MONACO_VERSION}/monaco-linux-amd64"
+          echo "Downloading from: $URL"
+          wget -O /tmp/monaco "$URL"
+          ls -lh /tmp/monaco
+          chmod +x /tmp/monaco
+          sudo install /tmp/monaco /usr/local/bin/monaco
           monaco version
 
       - name: 4 — staging dry-run (monaco deploy --dry-run)
@@ -63,17 +67,16 @@ jobs:
           node scripts/ci-validate.js tags
           node scripts/ci-validate.js benchmark
 
-      - name: Debug Monaco Download
+      - name: install Monaco
         run: |
-          echo "Monaco Version: $MONACO_VERSION"
+          set -euxo pipefail
           URL="https://github.com/Dynatrace/dynatrace-configuration-as-code/releases/download/v${MONACO_VERSION}/monaco-linux-amd64"
-          echo "Downloading from:"
-          echo "$URL"
-          pwd
-          ls -la
-          wget "$URL" -O monaco
-          ls -lh monaco
-          file monaco
+          echo "Downloading from: $URL"
+          wget -O /tmp/monaco "$URL"
+          ls -lh /tmp/monaco
+          chmod +x /tmp/monaco
+          sudo install /tmp/monaco /usr/local/bin/monaco
+          monaco version
       
       - name: 5 — deploy to trial tenant
         working-directory: monaco
