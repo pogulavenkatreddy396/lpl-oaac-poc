@@ -18,7 +18,7 @@ configs:
     config:
       name: "LPL OaC tag - sample"
       template: auto-tag.json
-      skip: false
+      skip: true
 
   - id: sample-custom-service
     type: custom-service-nodejs
@@ -45,4 +45,4 @@ configs:
     config:
       name: "LPL OaC alert - sample"
       template: metric-event.json
-      skip: false
+      skip: true
