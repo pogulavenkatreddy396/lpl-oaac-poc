@@ -35,7 +35,7 @@ configs:
     config:
       name: "LPL OaC profile - ClientWorks Trading API"
       template: alerting-profile.json
-      skip: false
+      skip: true
 
   - id: clientworks-trading-api-metric-event
     type:
