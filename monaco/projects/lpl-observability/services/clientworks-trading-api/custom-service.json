@@ -8,7 +8,11 @@
       "fileName": "routes/trading.js",
       "fileNameMatcher": "ENDS_WITH",
       "matchType": "ENDS_WITH",
-      "methodRules": []
+      "methodRules": [
+  {
+    "methodName": "handleRequest"
+  }
+      ]
     }
   ]
 }
