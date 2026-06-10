@@ -1,0 +1,30 @@
+{
+  "enabled": true,
+  "summary": "LPL OaC alert - clientworkdemoapi",
+  "queryDefinition": {
+    "type": "METRIC_KEY",
+    "metricKey": "builtin:service.response.time",
+    "aggregation": "AVG",
+    "entityFilter": {
+      "dimensionKey": "dt.entity.service",
+      "conditions": [
+        { "type": "TAG", "value": "lpl.managed-by:observability-as-code" }
+      ]
+    }
+  },
+  "modelProperties": {
+    "type": "STATIC_THRESHOLD",
+    "threshold": 2000000,
+    "alertCondition": "ABOVE",
+    "violatingSamples": 3,
+    "samples": 5,
+    "dealertingSamples": 5
+  },
+  "eventTemplate": {
+    "title": "clientworkdemoapi - builtin:service.response.time threshold breach",
+    "description": "Metric builtin:service.response.time for {dimensions:dt.entity.service} breached the LPL benchmark threshold of 2000000. Mapped severity P1.",
+    "eventType": "AVAILABILITY",
+    "davisMerge": true
+  },
+  "eventEntityDimensionKey": "dt.entity.service"
+}
