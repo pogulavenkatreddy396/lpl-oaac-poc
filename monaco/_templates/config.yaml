@@ -18,14 +18,14 @@ configs:
     config:
       name: "LPL OaC tag - {{SERVICE_NAME}}"
       template: auto-tag.json
-      skip: false
+      skip: true
 
   - id: {{CONFIG_ID}}-custom-service
     type: custom-service-{{TECHNOLOGY}}
     config:
       name: "{{SERVICE_NAME}}"
       template: custom-service.json
-      skip: false
+      skip: true
 
   - id: {{CONFIG_ID}}-alerting-profile
     type:
@@ -35,7 +35,7 @@ configs:
     config:
       name: "LPL OaC profile - {{SERVICE_NAME}}"
       template: alerting-profile.json
-      skip: false
+      skip: true
 
   - id: {{CONFIG_ID}}-metric-event
     type:
@@ -45,4 +45,4 @@ configs:
     config:
       name: "LPL OaC alert - {{SERVICE_NAME}}"
       template: metric-event.json
-      skip: false
+      skip: true
