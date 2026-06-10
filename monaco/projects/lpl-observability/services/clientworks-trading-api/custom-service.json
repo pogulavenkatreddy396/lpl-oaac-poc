@@ -1,12 +1,14 @@
 {
   "name": "ClientWorks Trading API",
   "enabled": true,
+  "queueEntryPoint": false,
   "rules": [
     {
       "enabled": true,
       "fileName": "routes/trading.js",
       "fileNameMatcher": "ENDS_WITH",
-      "matchType": "ENDS_WITH"
+      "matchType": "ENDS_WITH",
+      "methodRules": []
     }
   ]
 }
