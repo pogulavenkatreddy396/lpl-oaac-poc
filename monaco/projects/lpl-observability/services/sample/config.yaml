@@ -35,7 +35,7 @@ configs:
     config:
       name: "LPL OaC profile - sample"
       template: alerting-profile.json
-      skip: false
+      skip: true
 
   - id: sample-metric-event
     type:
