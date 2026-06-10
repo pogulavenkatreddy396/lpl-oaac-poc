@@ -18,7 +18,7 @@ configs:
     config:
       name: "LPL OaC tag - ClientWorks Trading API"
       template: auto-tag.json
-      skip: false
+      skip: true
 
   - id: clientworks-trading-api-custom-service
     type: custom-service-nodejs
@@ -45,4 +45,4 @@ configs:
     config:
       name: "LPL OaC alert - ClientWorks Trading API"
       template: metric-event.json
-      skip: false
+      skip: true
