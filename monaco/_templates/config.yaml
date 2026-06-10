@@ -30,7 +30,7 @@ configs:
   - id: {{CONFIG_ID}}-alerting-profile
     type:
       settings:
-        schema: builtin:alerting.profile
+        schema: builtin:appsec.notification-alerting-profile
         scope: environment
     config:
       name: "LPL OaC profile - {{SERVICE_NAME}}"
