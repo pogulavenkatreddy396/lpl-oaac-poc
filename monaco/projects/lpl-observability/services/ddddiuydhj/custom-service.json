@@ -1,0 +1,12 @@
+{
+  "name": "ddddiuydhj",
+  "enabled": true,
+  "rules": [
+    {
+      "enabled": true,
+      "fileName": "route/.js",
+      "fileNameMatcher": "ENDS_WITH",
+      "matchType": "ENDS_WITH"
+    }
+  ]
+}
