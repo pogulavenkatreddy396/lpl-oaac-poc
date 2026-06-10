@@ -1,0 +1,30 @@
+{
+  "enabled": true,
+  "summary": "LPL OaC alert - clienttrading_api",
+  "queryDefinition": {
+    "type": "METRIC_KEY",
+    "metricKey": "builtin:service.errors.total.rate",
+    "aggregation": "AVG",
+    "entityFilter": {
+      "dimensionKey": "dt.entity.service",
+      "conditions": [
+        { "type": "TAG", "value": "lpl.managed-by:observability-as-code" }
+      ]
+    }
+  },
+  "modelProperties": {
+    "type": "STATIC_THRESHOLD",
+    "threshold": 20,
+    "alertCondition": "ABOVE",
+    "violatingSamples": 3,
+    "samples": 5,
+    "dealertingSamples": 5
+  },
+  "eventTemplate": {
+    "title": "clienttrading_api - builtin:service.errors.total.rate threshold breach",
+    "description": "Metric builtin:service.errors.total.rate for {dimensions:dt.entity.service} breached the LPL benchmark threshold of 20. Mapped severity P1.",
+    "eventType": "AVAILABILITY",
+    "davisMerge": true
+  },
+  "eventEntityDimensionKey": "dt.entity.service"
+}
