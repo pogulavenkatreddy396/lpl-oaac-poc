@@ -25,7 +25,7 @@ configs:
     config:
       name: "sample"
       template: custom-service.json
-      skip: false
+      skip: true
 
   - id: sample-alerting-profile
     type:
