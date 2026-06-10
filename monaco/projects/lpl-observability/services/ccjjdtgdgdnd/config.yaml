@@ -18,14 +18,14 @@ configs:
     config:
       name: "LPL OaC tag - ccjjdtgdgdnd"
       template: auto-tag.json
-      skip: false
+      skip: true
 
   - id: ccjjdtgdgdnd-custom-service
     type: custom-service-nodejs
     config:
       name: "ccjjdtgdgdnd"
       template: custom-service.json
-      skip: false
+      skip: true
 
   - id: ccjjdtgdgdnd-alerting-profile
     type:
@@ -35,7 +35,7 @@ configs:
     config:
       name: "LPL OaC profile - ccjjdtgdgdnd"
       template: alerting-profile.json
-      skip: false
+      skip: true
 
   - id: ccjjdtgdgdnd-metric-event
     type:
@@ -45,4 +45,4 @@ configs:
     config:
       name: "LPL OaC alert - ccjjdtgdgdnd"
       template: metric-event.json
-      skip: false
+      skip: true
