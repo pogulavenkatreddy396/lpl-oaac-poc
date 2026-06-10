@@ -1,0 +1,12 @@
+{
+  "name": "clentworkingdemo",
+  "enabled": true,
+  "rules": [
+    {
+      "enabled": true,
+      "fileName": "routes/.js",
+      "fileNameMatcher": "ENDS_WITH",
+      "matchType": "ENDS_WITH"
+    }
+  ]
+}

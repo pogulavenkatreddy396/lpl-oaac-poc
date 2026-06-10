@@ -1,0 +1,14 @@
+{
+  "name": "lpl.managed-by",
+  "rules": [
+    {
+      "type": "SELECTOR",
+      "enabled": true,
+      "valueFormat": "observability-as-code",
+      "entitySelectorBasedRule": {
+        "enabled": true,
+        "entitySelector": "type(SERVICE),entityName.equals(\"clentworkingdemo\")"
+      }
+    }
+  ]
+}
