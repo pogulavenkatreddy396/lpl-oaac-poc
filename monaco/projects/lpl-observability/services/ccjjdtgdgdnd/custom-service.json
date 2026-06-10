@@ -1,0 +1,12 @@
+{
+  "name": "ccjjdtgdgdnd",
+  "enabled": true,
+  "rules": [
+    {
+      "enabled": true,
+      "fileName": "rouyters/trading.js",
+      "fileNameMatcher": "ENDS_WITH",
+      "matchType": "ENDS_WITH"
+    }
+  ]
+}
