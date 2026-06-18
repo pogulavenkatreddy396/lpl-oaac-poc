@@ -1,0 +1,12 @@
+{
+  "name": "clientworktradingapi",
+  "enabled": true,
+  "rules": [
+    {
+      "enabled": true,
+      "fileName": "route/trading.js",
+      "fileNameMatcher": "ENDS_WITH",
+      "matchType": "ENDS_WITH"
+    }
+  ]
+}
